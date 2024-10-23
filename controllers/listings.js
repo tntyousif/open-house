@@ -37,8 +37,13 @@ router.get('/:listingId', async (req, res) => {
         req.params.listingId
       ).populate('owner');
   
+      const userHasFavorited = populatedListings.favoritedByUsers.some((user) =>
+        user.equals(req.session.user._id)
+      );
+
       res.render('listings/show.ejs', {
         listing: populatedListings,
+        userHasFavorited: userHasFavorited,
       });
     } catch (error) {
       console.log(error);
@@ -47,6 +52,32 @@ router.get('/:listingId', async (req, res) => {
   });
 
 // controllers/listings.js
+
+//favorites
+router.post('/:listingId/favorited-by/:userId', async (req, res) => {
+  try {
+    await Listing.findByIdAndUpdate(req.params.listingId, {
+      $push: { favoritedByUsers: req.params.userId },
+    });
+    res.redirect(`/listings/${req.params.listingId}`);
+  } catch (error) {
+    console.log(error);
+    res.redirect('/');
+  }
+});
+
+//unfavorite
+router.delete('/:listingId/favorited-by/:userId', async (req, res) => {
+  try {
+    await Listing.findByIdAndUpdate(req.params.listingId, {
+      $pull: { favoritedByUsers: req.params.userId },
+    });
+    res.redirect(`/listings/${req.params.listingId}`);
+  } catch (error) {
+    console.log(error);
+    res.redirect('/');
+  }
+});
 
 router.get('/:listingId/edit', async (req, res) => {
   try {
