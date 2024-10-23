@@ -7,12 +7,14 @@ const Listing = require('../models/listing');
 
 router.get('/', async (req, res) => {
     try {
-        const listing = await Listing.find();
-        console.log(listing);
-        res.render('listings/index.ejs');
-    } 
-    catch(error) {
+        const populatedListings = await Listing.find({}).populate('owner');
+        console.log('Populated Listings:', populatedListings);
+        res.render('listings/index.ejs', {
+            listings: populatedListings,
+        });
+      } catch (error) {
         console.log(error);
+        res.redirect('/');
     }
 })
 
