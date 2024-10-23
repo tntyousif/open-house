@@ -14,6 +14,9 @@ const authController = require('./controllers/auth.js');
 // add listings controller:
 const listingsController = require('./controllers/listings');
 
+//users
+const usersController = require('./controllers/users.js');
+
 const port = process.env.PORT ? process.env.PORT : '3000';
 const path = require('path');
 
@@ -38,6 +41,8 @@ app.use(
 // add passUserToView middleware function to Express application
 app.use(passUserToView);
 
+//users
+app.use('/users', isSignedIn, usersController);
 
 // routes
 
