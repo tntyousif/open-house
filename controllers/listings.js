@@ -4,6 +4,7 @@ const router = express.Router();
 
 const Listing = require('../models/listing');
 
+
 router.get('/', async (req, res) => {
     try {
         const listing = await Listing.find();
@@ -14,5 +15,8 @@ router.get('/', async (req, res) => {
         console.log(error);
     }
 })
+router.get('/new', (req, res) => {
+    res.render('listings/new.ejs');
+});
 
 module.exports = router;
