@@ -7,9 +7,15 @@ const methodOverride = require('method-override');
 const morgan = require('morgan');
 const session = require('express-session');
 
+// require in middleware
+const isSignedIn = require('./middleware/is-signed-in.js');
+const passUserToView = require('./middleware/pass-user-to-view.js');
 const authController = require('./controllers/auth.js');
+// add listings controller:
+const listingsController = require('./controllers/listings');
 
 const port = process.env.PORT ? process.env.PORT : '3000';
+const path = require('path');
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -20,6 +26,7 @@ mongoose.connection.on('connected', () => {
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
 // app.use(morgan('dev'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -27,6 +34,12 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+// add passUserToView middleware function to Express application
+app.use(passUserToView);
+
+
+// routes
 
 app.get('/', (req, res) => {
   res.render('index.ejs', {
@@ -43,6 +56,8 @@ app.get('/vip-lounge', (req, res) => {
 });
 
 app.use('/auth', authController);
+// mount listings controller
+app.use('/listings', isSignedIn ,listingsController);
 
 app.listen(port, () => {
   console.log(`The express app is ready on port ${port}!`);
