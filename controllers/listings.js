@@ -48,6 +48,18 @@ router.get('/:listingId', async (req, res) => {
 
 // controllers/listings.js
 
+router.get('/:listingId/edit', async (req, res) => {
+  try {
+    const currentListing = await Listing.findById(req.params.listingId);
+    res.render('listings/edit.ejs', {
+      listing: currentListing,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect('/');
+  }
+});
+
 router.delete('/:listingId', async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.listingId);
