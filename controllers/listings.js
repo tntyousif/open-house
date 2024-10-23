@@ -18,6 +18,8 @@ router.get('/', async (req, res) => {
     }
 })
 
+
+
 router.get('/new', (req, res) => {
     res.render('listings/new.ejs');
 });
@@ -27,5 +29,21 @@ router.post('/',async (req, res) => {
     await Listing.create(req.body);
     res.redirect('/listings');
 });
+
+//show route
+router.get('/:listingId', async (req, res) => {
+    try {
+      const populatedListings = await Listing.findById(
+        req.params.listingId
+      ).populate('owner');
+  
+      res.render('listings/show.ejs', {
+        listing: populatedListings,
+      });
+    } catch (error) {
+      console.log(error);
+      res.redirect('/');
+    }
+  });
 
 module.exports = router;

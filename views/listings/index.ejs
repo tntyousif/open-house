@@ -12,9 +12,10 @@
     <h1>Here's all the Listings</h1>
     <ul>
       <% listings.forEach((listing) => { %>
-      <li>
-        A listing in <%= listing.city %> owned by <%= listing.owner.username %>.
-      </li>
+        <li>
+          A listing in <%= listing.city %> owned by <%= listing.owner.username %>.
+          <a href="/listings/<%= listing._id %>">View more details.</a>
+        </li>
       <% }) %>
     </ul>
     <a href="/listings/new">Add a New Listing</a>
